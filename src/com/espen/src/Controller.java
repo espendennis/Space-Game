@@ -67,7 +67,8 @@ public class Controller {
 			}
 			if (enemies.size() == 0)
 				spawnWave();
-
+			
+			//Player Level-Up
 			if (gameScore >= 100)
 				player.setLevel(2);
 			if (gameScore >= 200)
