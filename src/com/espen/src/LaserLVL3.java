@@ -6,6 +6,6 @@ public class LaserLVL3 extends Laser implements Projectile {
 		super(x, y, game, textures);
 		damage = Blackboard.DAMAGELASERLVL3;
 		speed = Blackboard.SPEEDLASERLVL3;
-		game.getController().spawnBlueMuzzleFlash(x - 0, y);
+		game.getController().spawnBlueMuzzleFlash(x, y);
 	}
 }
