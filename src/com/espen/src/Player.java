@@ -18,7 +18,7 @@ public class Player extends Actor {
 		this.y = y;
 		this.game = game;
 		player = textures.player;
-		this.setLevel(3);
+		this.setLevel(1);
 		health = 100;
 		controller = game.getController();
 	}
