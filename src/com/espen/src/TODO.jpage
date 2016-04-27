@@ -2,7 +2,8 @@
 - Different Enemy types
 - Animate Actors
 - implement Game states to realise a menu
-- Sprites for laser impacts and Enemy Animations and Player Animation
+- Sprites for laser impacts, Enemy Animations and Player Animation
 - move the Collision-Controll to the controller
 - implement Factions for Collision Controll
 - change the spawn-events for enemy waves (Property-Objects)
+- AI
