@@ -1,132 +1,255 @@
 package com.espen.src;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
+/**
+ * The game's player class
+ * 
+ * @author Dennis
+ *
+ */
 public class Player extends Actor {
 
-	private BufferedImage player;
 	private boolean up = false;
 	private boolean down = false;
 	private boolean right = false;
 	private boolean left = false;
 	private int count = 100;
 
-	public Player(double x, double y, Game game, Textures textures) {
-		this.x = x;
-		this.y = y;
-		this.game = game;
-		player = textures.player;
-		this.setLevel(1);
-		health = 100;
-		controller = game.getController();
+	/**
+	 * Constructor
+	 * 
+	 * @param game
+	 *            A reference to a game-object to get access to the other
+	 *            subsystems
+	 * @param cols
+	 *            number of columns the animation takes in the spritesheet
+	 * @param rows
+	 *            number of rows the animation takes in the spritesheet
+	 * @param animationSpeed
+	 *            how many ticks between the animation jumps to the next
+	 *            subimage
+	 * @param x
+	 *            x-coordinate of desired spawn-point
+	 * @param y
+	 *            y-coordinate of desired spawn-point
+	 */
+	public Player(Game game, int cols, int rows, int animationSpeed, double x, double y) {
+		super(game.getTextures().getPlayer(), game, cols, rows, animationSpeed, x, y);
+		this.setLevel(1); // set starting-level
+		health = 100; // set hitpoints
+		controller = game.getController(); // set controller
 	}
 
+	/**
+	 * the tick-method handles all updates for the player
+	 */
 	public void tick() {
-		x += velX;
-		y += velY;
-		if (x <= 0)
-			x = 0;
-		if (x >= game.getWidth() - player.getWidth())
-			x = game.getWidth() - player.getWidth();
-		if (y <= 0)
-			y = 0;
-		if (y >= game.getHeight() - player.getHeight())
-			y = game.getHeight() - player.getHeight();
-		if (isShooting) {
-			count++;
-			if (level == 1) {
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL1) {
-					this.fireBulletLVL1();
-					count = 0;
+		super.tick();
+		if (x <= 0) // if the player passes the left edge of the screen
+			x = 0; // move the player back to the edge
+		if (x >= game.getWidth() - 32)// if the player passes the right edge of
+										// the screen
+			x = game.getWidth() - 32;// move the player back to the edge
+		if (y <= 0)// if the player passes the upper edge of the screen
+			y = 0;// move the player back to the edge
+		if (y >= game.getHeight() - 32)// if the player passes the lower edge of
+										// the screen
+			y = game.getHeight() - 32;// move the player back to the edge
+		if (isShooting) { // if the player is shooting
+			count++; // increment count
+			if (level == 1) { // if the player is lvl1...
+				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL1) {// ...and
+																					// the
+																					// count
+																					// exceeds
+																					// the
+																					// number
+																					// of
+																					// ticks
+																					// between
+																					// 2
+																					// shots...
+					this.fireLaserLVL1();// ...shoot
+					count = 0;// reset count
 				}
 			}
-			if (level == 2) {
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL2) {
-					this.fireBulletLVL2();
-					count = 0;
+			if (level == 2) {// if the player is lvl2...
+				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL2) {// ...and
+																					// the
+																					// count
+																					// exceeds
+																					// the
+																					// number
+																					// of
+																					// ticks
+																					// between
+																					// 2
+																					// shots...
+					this.fireLaserLVL2();// ...shoot
+					count = 0;// reset count
 				}
 			}
-			if (level == 3) {
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL3) {
-					this.fireBulletLVL3();
-					count = 0;
+			if (level == 3) {// if the player is lvl3...
+				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL3) {// ...and
+																					// the
+																					// count
+																					// exceeds
+																					// the
+																					// number
+																					// of
+																					// ticks
+																					// between
+																					// 2
+																					// shots...
+					this.fireLaserLVL3();// ...shoot
+					count = 0;// reset count
 				}
 			}
 		}
-		if (!isShooting) {
-			count = 100;
+		if (!isShooting) {// if the player is not shooting...
+			count = 100; // ...set count to 100. Without these 2 lines the
+							// player would have to wait several ticks for the
+							// first shot everytime he starts shooting
 		}
-		if (health <= 0) {
-			controller.gameOver();
+		if (health <= 0) {// if the health drops under 0
+			if (controller == null) {// if controller is null...
+				controller = game.getController();// ...set controller. This
+													// prevents random
+													// nullpointer-exceptions
+			}
+			controller.gameOver();// call gameOver() in the Controller.
 		}
+
 	}
 
-	public void render(Graphics g) {
-		if (controller == null)
-			controller = game.getController();
-		if (!controller.isGameOver())
-			g.drawImage(player, (int) x, (int) y, null);
-
-	}
-
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public boolean isUp() {
 		return up;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public void setUp(boolean up) {
 		this.up = up;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public boolean isDown() {
 		return down;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public void setDown(boolean down) {
 		this.down = down;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public boolean isRight() {
 		return right;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public void setRight(boolean right) {
 		this.right = right;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public boolean isLeft() {
 		return left;
 	}
 
+	/**
+	 * used for keyinput-handling.
+	 * 
+	 * @see Controller
+	 * @return
+	 */
 	public void setLeft(boolean left) {
 		this.left = left;
 	}
 
-	public double getSpeed() {
-		return speed;
-	}
-
+	/**
+	 * set count. Count is used to delay the spawning of shots according to the
+	 * firerate.
+	 * 
+	 * @param count
+	 */
 	public void setCount(int count) {
 		this.count = count;
 	}
 
-	public void fireBulletLVL1() {
-		controller.spawnBulletLVL1(x, y);
+	/**
+	 * Spawn a LaserLVL1 projectile
+	 */
+	public void fireLaserLVL1() {
+
+		game.getSpawnSystem().spawnPlayerLaserLVL1(x, y);
 	}
 
-	public void fireBulletLVL2() {
-		controller.spawnBulletLVL2(x, y);
+	/**
+	 * Spawn a LaserLVL2 projectile
+	 */
+	public void fireLaserLVL2() {
+
+		game.getSpawnSystem().spawnPlayerLaserLVL2(x, y);
 	}
 
-	public void fireBulletLVL3() {
-		controller.spawnBulletLVL3(x, y);
+	/**
+	 * Spawn a LaserLVL3 projectile
+	 */
+	public void fireLaserLVL3() {
+		game.getSpawnSystem().spawnPlayerLaserLVL3(x, y);
 	}
 
+	/**
+	 * return the boundaries of the player for collision-control
+	 * 
+	 * @return Rectangle representing the boundaries of the player
+	 */
 	public Rectangle getBounds() {
 		return new Rectangle((int) x, (int) y, 32, 32);
 	}
 
+	/**
+	 * this method must be implemented when extending actor. There is no use in the
+	 * playerclass for this method because the destruction of the player is handled in the
+	 * controller on GameOver. So the body of this method is empty.
+	 */
 	public void destroy() {
 
 	}

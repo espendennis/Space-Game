@@ -1,65 +1,47 @@
 package com.espen.src;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class Animation {
-
-	private double x;
-	private double y;
-	private int maxCols;
-	private int actualCol = 1;
-	private int actualRow = 1;
-	private int count;
-	private int size;
-	private int speed;
-	private int tickcount = 0;
-	private int animationIndex = 0;
-	private SpriteSheet spriteSheet = null;
-	private BufferedImage[] sprite = null;
-	private Game game;
-
-	public Animation(BufferedImage image, Game game, int cols, int rows, int speed, double x, double y) {
-		this.maxCols = cols;
-		this.speed = speed;
-		this.count = cols * rows;
-		this.game = game;
-		size = image.getWidth() / maxCols;
-		spriteSheet = new SpriteSheet(image);
-		sprite = new BufferedImage[count];
-		this.x = x;
-		this.y = y;
-
-		for (int i = 0; i < count; i++) {
-			sprite[i] = spriteSheet.grabImage(actualCol, actualRow, size, size);
-			actualCol++;
-			if (actualCol > maxCols) {
-				actualCol = 1;
-				actualRow++;
-			}
-		}
-
+/**
+ * This Class is a special case of the Entity-Class. It is used for Animations
+ * which are spawned into the world, get drawn and are destroyed after one
+ * animation-loop. At this state of the game this class is only used for
+ * Particles.
+ * 
+ * @author Dennis
+ *
+ */
+public class Animation extends Entity {
+	/**
+	 * Constructor
+	 * 
+	 * @param image
+	 *            Spritesheet for this animation
+	 * @param game
+	 *            A reference to a game-object to get access to the other
+	 *            subsystems
+	 * @param cols
+	 *            number of columns the animation takes in the spritesheet
+	 * @param rows
+	 *            number of rows the animation takes in the spritesheet
+	 * @param animationSpeed
+	 *            how many ticks between the animation jumps to the next
+	 *            subimage
+	 * @param x
+	 *            x-coordinate of desired spawn-point
+	 * @param y
+	 *            y-coordinate of desired spawn-point
+	 */
+	public Animation(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
+		super(image, game, cols, rows, animationSpeed, x, y);
+		this.loopingAnimation = false;
 	}
 
-	public void tick() {
-
-		tickcount++;
-		if (tickcount >= speed) {
-			animationIndex++;
-			tickcount = 0;
-		}
-		if (animationIndex >= sprite.length) {
-			destroy();
-		}
-
-	}
-
-	public void render(Graphics g) {
-		g.drawImage(sprite[animationIndex], (int) x, (int) y, null);
-	}
-
+	/**
+	 * Destroys the animation by removing it from the Entity-Controller
+	 */
 	public void destroy() {
-		game.getController().removeAnimation(this);
+		game.getEntityManager().getAnimations().remove(this);
 	}
 
 }

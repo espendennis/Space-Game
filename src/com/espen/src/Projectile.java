@@ -2,7 +2,11 @@ package com.espen.src;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
-
+/**
+ * Interface for all projectiles in the game
+ * @author Dennis
+ *
+ */
 public interface Projectile {
 
 	public void tick();

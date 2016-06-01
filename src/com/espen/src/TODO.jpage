@@ -1,9 +1,5 @@
-- Change spawning system for Projectiles to not need an method in the controller for every type (Property-Objects)
 - Different Enemy types
-- Animate Actors
 - implement Game states to realise a menu
-- Sprites for laser impacts, Enemy Animations and Player Animation
-- move the Collision-Controll to the controller
-- implement Factions for Collision Controll
+- Sprites for laser impacts and Enemy Animations and Player Animation
 - change the spawn-events for enemy waves (Property-Objects)
-- AI
+- Implement Component-System for different Weapons on Player and Enemies

@@ -5,114 +5,143 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
+/**
+ * This method controlls the whole game. It calls the tick- and render-methods
+ * for every object in the game. It also controls the player's score, the
+ * keyinputs. Additional it handles a GameOver.
+ * 
+ * @author Dennis
+ *
+ */
 public class Controller {
 
-	private LinkedList<Projectile> projectiles = new LinkedList<Projectile>();
-	private LinkedList<Enemy> enemies = new LinkedList<Enemy>();
-	private LinkedList<Animation> animations = new LinkedList<Animation>();
+	private LinkedList<Projectile> projectiles;
+	private LinkedList<Enemy> enemies;
+	private LinkedList<Animation> animations;
 
 	private Projectile tempProjectile;
 	private Enemy tempEnemy;
 	private Animation tempAnimation;
 
 	private Game game;
-
 	private Player player;
+
 	private boolean playerDestroyed = false;
-
-	private Textures textures;
-
-	private int xOffsetBulletLVL1 = Blackboard.XOFFSETLASERLVL1;
-	private int xOffsetBulletLVL2 = Blackboard.XOFFSETLASERLVL2;
-	private int xOffsetBulletLVL3 = Blackboard.XOFFSETLASERLVL3;
 
 	private boolean gameOver = false;
 	private int gameScore = 0;
 
-	public Controller(Game game, Textures textures) {
+	/**
+	 * Constructor
+	 * 
+	 * @param game
+	 *            a reference to game to access the other subsystems
+	 */
+	public Controller(Game game) {
 		this.game = game;
-		this.textures = textures;
-		player = new Player(200, 200, game, textures);
-
-		spawnWave();
+		game.getSpawnSystem().spawnPlayer(200, 200);// spawn the player
+		game.getSpawnSystem().spawnWave();// spawn an initial wave of enemies
+		this.player = game.getEntityManager().getPlayer();
+		projectiles = game.getEntityManager().getProjectiles();
+		enemies = game.getEntityManager().getEnemies();
+		animations = game.getEntityManager().getAnimations();
 	}
 
+	/**
+	 * the tickmethod handles all the updates in the game
+	 */
 	public void tick() {
 
-		// AnimationTick
+		// call the tick-methods in all the animations
 		for (int i = 0; i < animations.size(); i++) {
 			tempAnimation = animations.get(i);
 			tempAnimation.tick();
 		}
 
-		if (!gameOver) {
+		if (!gameOver) {// if the game is not in gameOver-state.
 
-			// PlayerTick
+			// call the tick-method in the Player
 			player.tick();
 
-			// ProjectileTick
+			// call the tick-methods in all the projectiles
 			for (int i = 0; i < projectiles.size(); i++) {
 				tempProjectile = projectiles.get(i);
 
-				if (tempProjectile.getY() < 0)
-					removeProjectile(tempProjectile);
+				// if (tempProjectile.getY() < 0)
+				// game.getEntityManager().getProjectiles().remove(tempProjectile);
 
 				tempProjectile.tick();
 			}
 
-			// EnemyTick
+			// call the tick-methods in all the enemies
 			for (int i = 0; i < enemies.size(); i++) {
 				tempEnemy = enemies.get(i);
 				tempEnemy.tick();
 			}
-			if (enemies.size() == 0)
-				spawnWave();
-			
-			//Player Level-Up
-			if (gameScore >= 100)
-				player.setLevel(2);
-			if (gameScore >= 200)
-				player.setLevel(3);
+			if (enemies.size() == 0)// if there are no enemies left...
+				game.getSpawnSystem().spawnWave();// ...spawn a new wave
+
+			if (gameScore >= 100)// if the score reaches 100 points...
+				player.setLevel(2);// ...set the player's to 2
+			if (gameScore >= 200)// if the score reaches 200 points...
+				player.setLevel(3);// ...set the player's to 3
 		}
 
 	}
 
+	/**
+	 * the rendermethod handles the rendering of all the objects in the game
+	 */
 	public void render(Graphics g) {
 
-		if (!gameOver) {
+		if (!gameOver) {// if the is game is not in gameover-state
 
-			// RenderPlayer
+			if (player == null) {// if player is null...
+				player = game.getEntityManager().getPlayer();// ...Set the
+																// player. This
+																// prevents
+																// randomly
+																// happening
+																// null-pointer-exceptions
+			}
+			// render the player
 			player.render(g);
 
-			// RenderProjectiles
+			// render the projectiles
 			for (int i = 0; i < projectiles.size(); i++) {
 				tempProjectile = projectiles.get(i);
 				tempProjectile.render(g);
 			}
 
-			// RenderEnemies
+			// render the enemies
 			for (int i = 0; i < enemies.size(); i++) {
 				tempEnemy = enemies.get(i);
 				tempEnemy.render(g);
 			}
 
-			// Render HUD
+			// render the HUD
 			g.setFont(new Font("Dialog", Font.BOLD, 16));
 			g.drawString("Score: " + gameScore, 20, 20);
 			g.drawString("LVL: " + player.getLevel(), 120, 20);
 			g.drawString("HEALTH: " + player.getHealth(), 20, 450);
 		}
 
-		// RenderAnimations
+		// render the animations
 		for (int i = 0; i < animations.size(); i++) {
 			tempAnimation = animations.get(i);
 			tempAnimation.render(g);
 		}
 
-		if (gameOver) {
-			if (!playerDestroyed) {
-				game.getController().spawnExplosion01(player.getX(), player.getY());
-				playerDestroyed = !playerDestroyed;
+		if (gameOver) {// if the game is in gameover state
+			if (!playerDestroyed) {// if the player is not destroyed
+				game.getSpawnSystem().spawnExplosion01(player.getX(), player.getY());// spawn
+																						// an
+																						// explosion01
+																						// on
+																						// the
+																						// player's
+																						// position
+				playerDestroyed = !playerDestroyed;// swap playerDestroyed
 			}
 
 			Font standartFont = g.getFont();
@@ -127,97 +156,57 @@ public class Controller {
 
 	}
 
+	/**
+	 * add score
+	 * 
+	 * @param points
+	 *            how much points should be added to the score
+	 */
 	public void score(int points) {
 		gameScore += points;
 	}
 
+	/**
+	 * get the score
+	 * 
+	 * @return score
+	 */
 	public int getGameScore() {
 		return gameScore;
 	}
 
-	public Player getPlayer() {
-		return player;
-	}
-
-	public void spawnBulletLVL1(double x, double y) {
-		xOffsetBulletLVL1 = -xOffsetBulletLVL1;
-		this.addProjectile(new LaserLVL1(x + xOffsetBulletLVL1, y, game, textures));
-	}
-
-	public void spawnBulletLVL2(double x, double y) {
-		xOffsetBulletLVL2 = -xOffsetBulletLVL2;
-		this.addProjectile(new LaserLVL2(x + xOffsetBulletLVL2, y, game, textures));
-	}
-
-	public void spawnBulletLVL3(double x, double y) {
-		xOffsetBulletLVL3 = -xOffsetBulletLVL3;
-		this.addProjectile(new LaserLVL3(x + xOffsetBulletLVL3, y, game, textures));
-	}
-
-	public void spawnEnemyLaserLVL1(double x, double y) {
-		this.addProjectile(new EnemyLaserLVL1(x, y + 20, game, textures));
-	}
-
-	public void addProjectile(Projectile block) {
-		projectiles.add(block);
-	}
-
-	public void removeProjectile(Projectile block) {
-		projectiles.remove(block);
-	}
-
-	public void addEnemy(Enemy block) {
-		enemies.add(block);
-	}
-
-	public void removeEnemy(Enemy block) {
-		enemies.remove(block);
-
-	}
-
-	public void addAnimation(Animation block) {
-		animations.add(block);
-	}
-
-	public void removeAnimation(Animation block) {
-		animations.remove(block);
-	}
-
-	public LinkedList<Projectile> getProjectiles() {
-		return projectiles;
-	}
-
-	public LinkedList<Enemy> getEnemies() {
-		return enemies;
-	}
-
-	public void spawnWave() {
-		for (int x = 0; x < (Game.WIDTH * Game.SCALE); x += 64) {
-			addEnemy(new Enemy(x, 0, game, textures));
-		}
-	}
-
+	/**
+	 * set the game to gameover state
+	 */
 	public void gameOver() {
 		gameOver = true;
-		enemies.clear();
+		enemies.clear();// remove all enemies
 	}
 
+	/**
+	 * check if the game is in gameover state
+	 * 
+	 * @return if the game is in gameover state
+	 */
 	public boolean isGameOver() {
 		return gameOver;
 	}
 
-	public void spawnExplosion01(double x, double y) {
-		this.addAnimation(new Animation(game.getExplosion01(), game, 4, 4, Blackboard.EXPLOSION01SPEED, x, y));
-	}
+	/*
+	 * InputHandling
+	 * 
+	 * Note: If the player for example moves to the right and wants to change
+	 * direction to move to the left and he presses the left key shortly before
+	 * he releases the right key the player's ship would stop moving. To prevent
+	 * this from happening several booleans are set and checked during input
+	 * handling.
+	 */
 
-	public void spawnBlueMuzzleFlash(double x, double y) {
-		this.addAnimation(new Animation(game.getBlueMuzzleFlash(), game, 4, 1, Blackboard.BLUEMUZZLEFLASHSPEED, x, y));
-	}
-
-	public void spawnRedMuzzleFlash(double x, double y) {
-		this.addAnimation(new Animation(game.getRedMuzzleFlash(), game, 4, 1, Blackboard.REDMUZZLEFLASHSPEED, x, y));
-	}
-
+	/**
+	 * handles the keyPressed events
+	 * 
+	 * @param e
+	 */
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
 
@@ -242,36 +231,41 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * handles the keyReleased events
+	 * 
+	 * @param e
+	 */
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
 
 		if (key == KeyEvent.VK_RIGHT) {
-			if (player.isLeft()) {
-				player.setVelX(-Blackboard.PLAYERSPEED);
+			if (player.isLeft()) {// if player is already pressing left...
+				player.setVelX(-Blackboard.PLAYERSPEED);// ...move left
 			} else {
 				player.setVelX(0);
 			}
 			player.setRight(false);
 
 		} else if (key == KeyEvent.VK_LEFT) {
-			if (player.isRight()) {
-				player.setVelX(Blackboard.PLAYERSPEED);
+			if (player.isRight()) {// if player is already pressing right...
+				player.setVelX(Blackboard.PLAYERSPEED);// ...move right
 			} else {
 				player.setVelX(0);
 			}
 			player.setLeft(false);
 
 		} else if (key == KeyEvent.VK_DOWN) {
-			if (player.isUp()) {
-				player.setVelY(-Blackboard.PLAYERSPEED);
+			if (player.isUp()) {// if player is already pressing up...
+				player.setVelY(-Blackboard.PLAYERSPEED);// ...move up
 			} else {
 				player.setVelY(0);
 			}
 			player.setDown(false);
 
 		} else if (key == KeyEvent.VK_UP) {
-			if (player.isDown()) {
-				player.setVelY(Blackboard.PLAYERSPEED);
+			if (player.isDown()) {// if player is already pressing down...
+				player.setVelY(Blackboard.PLAYERSPEED);// ...move down
 			} else {
 				player.setVelY(0);
 			}
