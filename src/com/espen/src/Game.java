@@ -37,6 +37,7 @@ public class Game extends Canvas implements Runnable {
 										 * The subsystem responsible for
 										 * spawning objects into the game
 										 */
+	private PlayerController playerController;
 
 	/**
 	 * This method initializes the games' subsystems.
@@ -49,6 +50,8 @@ public class Game extends Canvas implements Runnable {
 		entityManager = new EntityManager(this);
 		spawnSystem = new SpawnSystem(this);
 		controller = new Controller(this);
+		playerController = new PlayerController(this);
+		playerController.possess(entityManager.getPlayer());
 		addKeyListener(new KeyInput(this));
 
 	}
@@ -250,5 +253,9 @@ public class Game extends Canvas implements Runnable {
 	 */
 	public SpawnSystem getSpawnSystem() {
 		return spawnSystem;
+	}
+
+	public PlayerController getPlayerController() {
+		return playerController;
 	}
 }

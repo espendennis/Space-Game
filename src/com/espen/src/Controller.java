@@ -2,7 +2,6 @@ package com.espen.src;
 
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 /**
@@ -190,92 +189,6 @@ public class Controller {
 	 */
 	public boolean isGameOver() {
 		return gameOver;
-	}
-
-	/*
-	 * InputHandling
-	 * 
-	 * Note: If the player for example moves to the right and wants to change
-	 * direction to move to the left and he presses the left key shortly before
-	 * he releases the right key the player's ship would stop moving. To prevent
-	 * this from happening several booleans are set and checked during input
-	 * handling.
-	 */
-
-	/**
-	 * handles the keyPressed events
-	 * 
-	 * @param e
-	 */
-	public void keyPressed(KeyEvent e) {
-		int key = e.getKeyCode();
-
-		if (key == KeyEvent.VK_RIGHT) {
-			player.setVelX(Blackboard.PLAYERSPEED);
-			player.setRight(true);
-
-		} else if (key == KeyEvent.VK_LEFT) {
-			player.setVelX(-Blackboard.PLAYERSPEED);
-			player.setLeft(true);
-
-		} else if (key == KeyEvent.VK_DOWN) {
-			player.setVelY(Blackboard.PLAYERSPEED);
-			player.setDown(true);
-
-		} else if (key == KeyEvent.VK_UP) {
-			player.setVelY(-Blackboard.PLAYERSPEED);
-			player.setUp(true);
-
-		} else if (key == KeyEvent.VK_SPACE) {
-			player.setShooting(true);
-		}
-	}
-
-	/**
-	 * handles the keyReleased events
-	 * 
-	 * @param e
-	 */
-	public void keyReleased(KeyEvent e) {
-		int key = e.getKeyCode();
-
-		if (key == KeyEvent.VK_RIGHT) {
-			if (player.isLeft()) {// if player is already pressing left...
-				player.setVelX(-Blackboard.PLAYERSPEED);// ...move left
-			} else {
-				player.setVelX(0);
-			}
-			player.setRight(false);
-
-		} else if (key == KeyEvent.VK_LEFT) {
-			if (player.isRight()) {// if player is already pressing right...
-				player.setVelX(Blackboard.PLAYERSPEED);// ...move right
-			} else {
-				player.setVelX(0);
-			}
-			player.setLeft(false);
-
-		} else if (key == KeyEvent.VK_DOWN) {
-			if (player.isUp()) {// if player is already pressing up...
-				player.setVelY(-Blackboard.PLAYERSPEED);// ...move up
-			} else {
-				player.setVelY(0);
-			}
-			player.setDown(false);
-
-		} else if (key == KeyEvent.VK_UP) {
-			if (player.isDown()) {// if player is already pressing down...
-				player.setVelY(Blackboard.PLAYERSPEED);// ...move down
-			} else {
-				player.setVelY(0);
-			}
-			player.setUp(false);
-
-		} else if (key == KeyEvent.VK_SPACE) {
-			player.setShooting(false);
-			player.setCount(0);
-		}
-
 	}
 
 }

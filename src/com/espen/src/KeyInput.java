@@ -28,13 +28,13 @@ public class KeyInput extends KeyAdapter {
 	 * Forward the handling for the input to the controller
 	 */
 	public void keyPressed(KeyEvent e) {
-		game.getController().keyPressed(e);
+		game.getPlayerController().keyPressed(e);
 	}
 
 	/**
 	 * Forward the handling for the input to the controller
 	 */
 	public void keyReleased(KeyEvent e) {
-		game.getController().keyReleased(e);
+		game.getPlayerController().keyReleased(e);
 	}
 }

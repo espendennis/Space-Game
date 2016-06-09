@@ -1,5 +1,4 @@
 - Different Enemy types
 - implement Game states to realise a menu
-- Sprites for laser impacts and Enemy Animations and Player Animation
 - change the spawn-events for enemy waves (Property-Objects)
 - Implement Component-System for different Weapons on Player and Enemies
