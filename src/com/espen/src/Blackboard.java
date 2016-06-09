@@ -76,4 +76,5 @@ public class Blackboard {
 	public static final int REDLASERIMPACTSPEED = 5; // Animationspeed for the
 														// red laser impact
 														// animation
+	
 }
