@@ -24,25 +24,18 @@ public class PlayerLaser extends Entity implements Projectile {
 	/**
 	 * Constructor
 	 * 
-	 * @param image
-	 *            Spritesheet for this character
+	 * @param sprite
+	 *            Spritesheet for this Entity
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public PlayerLaser(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(image, game, cols, rows, animationSpeed, x, y);
+	public PlayerLaser(BufferedImage[] sprite, Game game, double x, double y) {
+		super(sprite, game, x, y);
 		damage = Blackboard.DAMAGELASSERLVL1; // set damage
 		speed = Blackboard.SPEEDLASERLVL1; // set speed
 	}

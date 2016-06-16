@@ -19,25 +19,18 @@ public class Enemy extends Actor {
 	/**
 	 * Constructor
 	 * 
-	 * @param image
+	 * @param sprite
 	 *            Spritesheet for this character
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public Enemy(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(image, game, cols, rows, animationSpeed, x, y);
+	public Enemy(BufferedImage[] sprite, Game game, double x, double y) {
+		super(sprite, game, x, y);
 		velY = Blackboard.ENEMYSPEEDLVL1; // Player moves downwards after beeing
 											// spawned
 		random = new Random(); // Random-Class for randomizing shooting in the
@@ -93,10 +86,11 @@ public class Enemy extends Actor {
 	 */
 	private void shooting() {
 		if (player == null) { // check if player is null
-			player = game.getEntityManager().getPlayer(); // set the player. This
-														// prevents randomly
-														// happening
-														// null-pointer-exceptions
+			player = game.getEntityManager().getPlayer(); // set the player.
+															// This
+															// prevents randomly
+															// happening
+															// null-pointer-exceptions
 		}
 		count++; // increment null every tick
 		if (count > (Blackboard.TICKRATE / Blackboard.ENEMYFIRERATELVL1)) {// if

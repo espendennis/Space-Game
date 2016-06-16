@@ -62,19 +62,7 @@ public class Blackboard {
 													// player's LVL3 laser
 
 	// Animations
-	public static final int EXPLOSION01SPEED = 5; // Animationspeed for the
-													// explosion01 animation
-	public static final int BLUEMUZZLEFLASHSPEED = 5; // Animationspeed for the
-														// blue muzzleflash
-														// animation
-	public static final int REDMUZZLEFLASHSPEED = 5; // Animationspeed for the
-														// red muzzleflash
-														// animation
-	public static final int BLUELASERIMPACTSPEED = 5; // Animationspeed for the
-														// blue laser impact
-														// animation
-	public static final int REDLASERIMPACTSPEED = 5; // Animationspeed for the
-														// red laser impact
-														// animation
-	
+	public static final int STANDARTANIMATIONSPEED = 5; // standart animation
+														// speed
+
 }
