@@ -22,20 +22,13 @@ public class Player extends Actor {
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public Player(Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(game.getTextures().getPlayer(), game, cols, rows, animationSpeed, x, y);
+	public Player(Game game, double x, double y) {
+		super(game.getTextures().getPlayer(), game, x, y);
 		this.setLevel(1); // set starting-level
 		health = 100; // set hitpoints
 		controller = game.getController(); // set controller
@@ -246,9 +239,10 @@ public class Player extends Actor {
 	}
 
 	/**
-	 * this method must be implemented when extending actor. There is no use in the
-	 * playerclass for this method because the destruction of the player is handled in the
-	 * controller on GameOver. So the body of this method is empty.
+	 * this method must be implemented when extending actor. There is no use in
+	 * the playerclass for this method because the destruction of the player is
+	 * handled in the controller on GameOver. So the body of this method is
+	 * empty.
 	 */
 	public void destroy() {
 

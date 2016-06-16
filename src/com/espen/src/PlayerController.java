@@ -59,6 +59,7 @@ public class PlayerController {
 	 * handles the keyPressed events
 	 * 
 	 * @param e
+	 *            KeyEvent
 	 */
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
@@ -89,6 +90,7 @@ public class PlayerController {
 	 * handles the keyReleased events
 	 * 
 	 * @param e
+	 *            KeyEvent
 	 */
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
