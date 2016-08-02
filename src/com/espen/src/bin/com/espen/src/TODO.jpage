@@ -1,0 +1,3 @@
+- Different Enemy types
+- implement Game states to realise a menu
+- change the spawn-events for enemy waves (Property-Objects)
