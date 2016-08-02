@@ -14,7 +14,6 @@ public class Player extends Actor {
 	private boolean down = false;
 	private boolean right = false;
 	private boolean left = false;
-	private int count = 100;
 
 	/**
 	 * Constructor
@@ -22,20 +21,13 @@ public class Player extends Actor {
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public Player(Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(game.getTextures().getPlayer(), game, cols, rows, animationSpeed, x, y);
+	public Player(Game game, double x, double y) {
+		super(game.getTextures().getPlayer(), game, x, y);
 		this.setLevel(1); // set starting-level
 		health = 100; // set hitpoints
 		controller = game.getController(); // set controller
@@ -56,62 +48,8 @@ public class Player extends Actor {
 		if (y >= game.getHeight() - 32)// if the player passes the lower edge of
 										// the screen
 			y = game.getHeight() - 32;// move the player back to the edge
-		if (isShooting) { // if the player is shooting
-			count++; // increment count
-			if (level == 1) { // if the player is lvl1...
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL1) {// ...and
-																					// the
-																					// count
-																					// exceeds
-																					// the
-																					// number
-																					// of
-																					// ticks
-																					// between
-																					// 2
-																					// shots...
-					this.fireLaserLVL1();// ...shoot
-					count = 0;// reset count
-				}
-			}
-			if (level == 2) {// if the player is lvl2...
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL2) {// ...and
-																					// the
-																					// count
-																					// exceeds
-																					// the
-																					// number
-																					// of
-																					// ticks
-																					// between
-																					// 2
-																					// shots...
-					this.fireLaserLVL2();// ...shoot
-					count = 0;// reset count
-				}
-			}
-			if (level == 3) {// if the player is lvl3...
-				if (count > Blackboard.TICKRATE / Blackboard.FIRERATELASERLVL3) {// ...and
-																					// the
-																					// count
-																					// exceeds
-																					// the
-																					// number
-																					// of
-																					// ticks
-																					// between
-																					// 2
-																					// shots...
-					this.fireLaserLVL3();// ...shoot
-					count = 0;// reset count
-				}
-			}
-		}
-		if (!isShooting) {// if the player is not shooting...
-			count = 100; // ...set count to 100. Without these 2 lines the
-							// player would have to wait several ticks for the
-							// first shot everytime he starts shooting
-		}
+		
+
 		if (health <= 0) {// if the health drops under 0
 			if (controller == null) {// if controller is null...
 				controller = game.getController();// ...set controller. This
@@ -144,7 +82,7 @@ public class Player extends Actor {
 	}
 
 	/**
-	 * used for keyinput-handling.
+	 * used for keyinput-handling.                     
 	 * 
 	 * @see Controller
 	 * @return
@@ -203,38 +141,6 @@ public class Player extends Actor {
 		this.left = left;
 	}
 
-	/**
-	 * set count. Count is used to delay the spawning of shots according to the
-	 * firerate.
-	 * 
-	 * @param count
-	 */
-	public void setCount(int count) {
-		this.count = count;
-	}
-
-	/**
-	 * Spawn a LaserLVL1 projectile
-	 */
-	public void fireLaserLVL1() {
-
-		game.getSpawnSystem().spawnPlayerLaserLVL1(x, y);
-	}
-
-	/**
-	 * Spawn a LaserLVL2 projectile
-	 */
-	public void fireLaserLVL2() {
-
-		game.getSpawnSystem().spawnPlayerLaserLVL2(x, y);
-	}
-
-	/**
-	 * Spawn a LaserLVL3 projectile
-	 */
-	public void fireLaserLVL3() {
-		game.getSpawnSystem().spawnPlayerLaserLVL3(x, y);
-	}
 
 	/**
 	 * return the boundaries of the player for collision-control
@@ -246,9 +152,10 @@ public class Player extends Actor {
 	}
 
 	/**
-	 * this method must be implemented when extending actor. There is no use in the
-	 * playerclass for this method because the destruction of the player is handled in the
-	 * controller on GameOver. So the body of this method is empty.
+	 * this method must be implemented when extending actor. There is no use in
+	 * the playerclass for this method because the destruction of the player is
+	 * handled in the controller on GameOver. So the body of this method is
+	 * empty.
 	 */
 	public void destroy() {
 

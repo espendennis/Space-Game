@@ -1,4 +1,6 @@
 - Different Enemy types
-- implement Game states to realise a menu
+- implement the different menues
+- Level-Editor
+- Levels
+- EnemyController/ AI
 - change the spawn-events for enemy waves (Property-Objects)
-- Implement Component-System for different Weapons on Player and Enemies

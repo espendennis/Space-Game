@@ -1,7 +1,9 @@
 package com.espen.src;
 
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
 
 /**
  * The game's baseclass for every "Character" in the game.
@@ -14,29 +16,24 @@ public abstract class Actor extends Entity {
 	protected int health = 100;
 	protected int level = 1;
 	protected boolean isShooting = false;
-
+	protected LinkedList<Weapon> weapons;
+	
 	/**
 	 * Constructor
 	 * 
-	 * @param image
-	 *            Spritesheet for this character
+	 * @param sprite
+	 *            Spritesheet for this Entity
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public Actor(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(image, game, cols, rows, animationSpeed, x, y);
+	public Actor(BufferedImage[] sprite, Game game, double x, double y) {
+		super(sprite, game, x, y);
+		weapons = new LinkedList<Weapon>();
 	}
 
 	/**
@@ -108,5 +105,34 @@ public abstract class Actor extends Entity {
 	 */
 	public abstract void destroy();
 	
+	@Override
+	public void tick(){
+		super.tick();
+		if(!weapons.isEmpty()){
+			for(Weapon wp : weapons){
+				wp.tick();
+			}
+			
+		}
+	}
+	
+	@Override
+	public void render(Graphics g){
+		super.render(g);
+		if(!weapons.isEmpty()){
+			for(Weapon wp : weapons){
+				wp.render(g);
+			}
+			
+		}
+	}
+
+	public void addWeapon(Weapon weapon){
+		weapons.add(weapon);
+	}
+	
+	public LinkedList<Weapon> getWeapons() {
+		return weapons;
+	}
 
 }

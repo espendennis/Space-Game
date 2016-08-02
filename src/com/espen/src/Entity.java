@@ -22,50 +22,33 @@ public abstract class Entity {
 	protected double velY;
 	protected double imageSize;
 	protected int tickcount = 0;
-	protected int animationIndex = 0;
+	protected int currentFrameOfAnimation = 0;
 	protected Game game;
 	protected Controller controller = null;
 
 	protected Textures textures;
 	protected BufferedImage[] sprite;
 	protected boolean loopingAnimation = true;
-	private int count = 0;
-	private int count2 = 0;
 
 	/**
 	 * Constructor
 	 * 
-	 * @param image
-	 *            Spritesheet for this character
+	 * @param sprite
+	 *            Spritesheet for this entity
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public Entity(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		this.animationSpeed = animationSpeed;
-		this.count = cols * rows;
+	public Entity(BufferedImage[] sprite, Game game, double x, double y) {
+		this.animationSpeed = Blackboard.STANDARTANIMATIONSPEED;
 		this.game = game;
-		sprite = new BufferedImage[count];
+		this.sprite = sprite;
 		this.x = x;
 		this.y = y;
-		// Fill the BufferedImage Array for the animation with subimages from
-		// the spritesheet
-		for (int i = 1; i <= rows; i++)
-			for (int j = 1; j <= cols; j++) {
-				sprite[count2] = image.getSubimage((j * 32) - 32, (i * 32) - 32, 32, 32);
-				count2++;
-			}
 
 	}
 
@@ -109,26 +92,28 @@ public abstract class Entity {
 	 * the tick-method handles all updates for the entity
 	 */
 	public void tick() {
-		x += velX;	//update the x-position with the x-velocity
-		y += velY;	//update the y-position with the y-velocity
+		x += velX; // update the x-position with the x-velocity
+		y += velY; // update the y-position with the y-velocity
 		tickcount++; // increment tickcount
-		if (tickcount >= animationSpeed) { // if tickcount reaches the desired
-											// of ticks between
-											// animationupdates...
-			animationIndex++; // ...increment the animation index
+		// if tickcount reaches the desired amount of ticks between
+		// animationupdates...
+		if (tickcount >= animationSpeed) {
+			currentFrameOfAnimation++; // ...switch to the next frame
 			tickcount = 0; // reset tickcount
 		}
-		if (animationIndex >= sprite.length) {// if the animationIndex exceeds
-												// the size of the BufferedImage
-												// Array holding the sprites...
+		if (currentFrameOfAnimation >= sprite.length) {// if the frameindex
+														// exceeds
+			// the size of the BufferedImage
+			// Array holding the sprites...
 			if (loopingAnimation) { // ...and if the animation i set to loop...
-				animationIndex = 0; // ...reset the index
+				currentFrameOfAnimation = 0; // ...reset the index
 				// else-case is used for the animation-class
 			} else { // if the animation is not set to loop
 				destroy(); // destroy the entity
 			}
 
 		}
+
 	}
 
 	/**
@@ -138,16 +123,13 @@ public abstract class Entity {
 	 *            Graphics object used to draw the entity
 	 */
 	public void render(Graphics g) {
-
-		g.drawImage(sprite[animationIndex], (int) x, (int) y, null); // draw the
-																		// current
-																		// sprite
+		// draw the current sprite
+		g.drawImage(sprite[currentFrameOfAnimation], (int) x, (int) y, null);
 
 	}
 
 	/**
-	 * abstract mathod to destroy the entity
+	 * abstract method to destroy the entity
 	 */
 	public abstract void destroy();
-
 }

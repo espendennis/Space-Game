@@ -24,25 +24,18 @@ public class PlayerLaser extends Entity implements Projectile {
 	/**
 	 * Constructor
 	 * 
-	 * @param image
-	 *            Spritesheet for this character
+	 * @param sprite
+	 *            Spritesheet for this Entity
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public PlayerLaser(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(image, game, cols, rows, animationSpeed, x, y);
+	public PlayerLaser(BufferedImage[] sprite, Game game, double x, double y) {
+		super(sprite, game, x, y);
 		damage = Blackboard.DAMAGELASSERLVL1; // set damage
 		speed = Blackboard.SPEEDLASERLVL1; // set speed
 	}
@@ -50,12 +43,8 @@ public class PlayerLaser extends Entity implements Projectile {
 	public void tick() {
 		y -= speed; // update y-position by speed
 		checkCollision(); // call collisioncheck
-		if (this.getY() > (Blackboard.GAMEHEIGHT + 32) || this.getY() < -32) // if
-																				// a
-																				// projectile
-																				// exits
-																				// the
-																				// screen...
+		// if a projectile exits the screen...
+		if (this.getY() > (Blackboard.GAMEHEIGHT + 32) || this.getY() < -32)
 			this.destroy(); // ...destroy it
 
 	}
@@ -101,17 +90,14 @@ public class PlayerLaser extends Entity implements Projectile {
 		if (game == null) {// if game is null...
 			System.out.println("Game null");// ...set game. This prevents random
 											// nullpointer-exceptions
-		}
-		enemies = game.getEntityManager().getEnemies(); // get the LinkedList
-														// with all enemies from
-														// the Entity-Manager
+		} 
+		// get the LinkedList // with all enemies from the Entity-Manager
+		enemies = game.getEntityManager().getEnemies();
 		for (int i = 0; i < enemies.size(); i++) { // for every enemy in the
 													// list
 			enemy = enemies.get(i); // get enemy
-			collision = this.getBounds().intersects(enemy.getBounds());// check
-																		// if
-																		// bounds
-																		// intersect
+			// check if bounds intersect
+			collision = this.getBounds().intersects(enemy.getBounds());
 			if (collision == true) {
 				game.getSpawnSystem().spawnBlueLaserImpact(x, y);// spawn
 																	// impact-animation

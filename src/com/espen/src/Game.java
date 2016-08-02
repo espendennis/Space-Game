@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+
 import javax.swing.JFrame;
 
 /**
@@ -154,6 +155,7 @@ public class Game extends Canvas implements Runnable {
 	 */
 	private void tick() {
 		controller.tick();
+
 	}
 
 	/**
@@ -183,10 +185,9 @@ public class Game extends Canvas implements Runnable {
 									 * Bufferstrategy to draw into the Buffer
 									 */
 		g.setColor(new Color(150, 150, 150));
-		g.drawImage(textures.getImage(), 0, 0, getWidth(), getHeight(),
-				this); /* this overwrites the last frame */
 		g.drawImage(textures.getBackground(), 0, 0,
 				this); /* paint the Background image */
+
 		controller.render(g); /* call the render-method in the controller */
 
 		g.dispose(); /* dispose the Graphics-Object */
@@ -246,6 +247,7 @@ public class Game extends Canvas implements Runnable {
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
+
 	/**
 	 * get a reference to the spawn subsystem
 	 * 
@@ -258,4 +260,5 @@ public class Game extends Canvas implements Runnable {
 	public PlayerController getPlayerController() {
 		return playerController;
 	}
+
 }

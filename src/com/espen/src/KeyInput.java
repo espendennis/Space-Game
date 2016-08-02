@@ -4,7 +4,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 /**
- * pretty simple utility class to handle keyinputs
+ * pretty simple utility class to forward keyinputs to the playerController
  * 
  * @author Dennis
  *

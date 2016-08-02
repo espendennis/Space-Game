@@ -4,6 +4,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.LinkedList;
 
+import com.espen.src.menus.MainMenu;
+import com.espen.src.menus.OptionsMenu;
+
 /**
  * This method controlls the whole game. It calls the tick- and render-methods
  * for every object in the game. It also controls the player's score, the
@@ -29,6 +32,14 @@ public class Controller {
 
 	private boolean gameOver = false;
 	private int gameScore = 0;
+	private MainMenu mainMenu;
+	private OptionsMenu optionsMenu;
+
+	private enum GameStates {
+		MAINMENU, OPTIONSMENU, INGAME, GAMEOVER;
+	};
+
+	private GameStates gameState;
 
 	/**
 	 * Constructor
@@ -44,6 +55,10 @@ public class Controller {
 		projectiles = game.getEntityManager().getProjectiles();
 		enemies = game.getEntityManager().getEnemies();
 		animations = game.getEntityManager().getAnimations();
+		player.addWeapon(new LaserGunLVL1(game.getTextures().getPlayerLaserLVL1(), player, game));
+		gameState = GameStates.INGAME;
+		mainMenu = new MainMenu(this);
+		optionsMenu = new OptionsMenu(this);
 	}
 
 	/**
@@ -57,7 +72,8 @@ public class Controller {
 			tempAnimation.tick();
 		}
 
-		if (!gameOver) {// if the game is not in gameOver-state.
+		if (gameState == GameStates.INGAME) {// if the game is not in
+												// gameOver-state.
 
 			// call the tick-method in the Player
 			player.tick();
@@ -65,10 +81,6 @@ public class Controller {
 			// call the tick-methods in all the projectiles
 			for (int i = 0; i < projectiles.size(); i++) {
 				tempProjectile = projectiles.get(i);
-
-				// if (tempProjectile.getY() < 0)
-				// game.getEntityManager().getProjectiles().remove(tempProjectile);
-
 				tempProjectile.tick();
 			}
 
@@ -80,10 +92,27 @@ public class Controller {
 			if (enemies.size() == 0)// if there are no enemies left...
 				game.getSpawnSystem().spawnWave();// ...spawn a new wave
 
-			if (gameScore >= 100)// if the score reaches 100 points...
-				player.setLevel(2);// ...set the player's to 2
-			if (gameScore >= 200)// if the score reaches 200 points...
-				player.setLevel(3);// ...set the player's to 3
+			// if the score reaches 100 points...
+			if (gameScore >= 100 & player.getLevel() < 2) {
+				player.setLevel(2);// ...set the player's level to 2
+				player.getWeapons().clear();
+				LaserGunLVL2 temp = new LaserGunLVL2(game.getTextures().getPlayerLaserLVL1(), player, game);
+				player.getWeapons().add(temp);
+			}
+			// if the score reaches 200 points...
+			if (gameScore >= 200 & player.getLevel() < 3) {
+				player.setLevel(3);// ...set the player's level to 3
+				player.getWeapons().clear();
+				LaserGunLVL3 temp = new LaserGunLVL3(game.getTextures().getPlayerLaserLVL3(), player, game);
+				player.getWeapons().add(temp);
+			}
+			if (gameScore >= 300 & player.getLevel() < 4) {
+				player.setLevel(4);
+				LaserGunLVL2 temp = new LaserGunLVL2(game.getTextures().getPlayerLaserLVL3(), player, game);
+				LaserGunLVL3 temp2 = new LaserGunLVL3(game.getTextures().getPlayerLaserLVL3(), player, game);
+				player.getWeapons().add(temp);
+				player.getWeapons().add(temp2);
+			}
 		}
 
 	}
@@ -93,15 +122,19 @@ public class Controller {
 	 */
 	public void render(Graphics g) {
 
-		if (!gameOver) {// if the is game is not in gameover-state
+		// render the animations
+		for (int i = 0; i < animations.size(); i++) {
+			tempAnimation = animations.get(i);
+			tempAnimation.render(g);
+		}
+
+		if (gameState == GameStates.INGAME) {// if the is game is not in
+												// gameover-state
 
 			if (player == null) {// if player is null...
-				player = game.getEntityManager().getPlayer();// ...Set the
-																// player. This
-																// prevents
-																// randomly
-																// happening
-																// null-pointer-exceptions
+				// ...Set the player. This prevents randomly happening
+				// null-pointer-exceptions
+				player = game.getEntityManager().getPlayer();
 			}
 			// render the player
 			player.render(g);
@@ -123,32 +156,22 @@ public class Controller {
 			g.drawString("Score: " + gameScore, 20, 20);
 			g.drawString("LVL: " + player.getLevel(), 120, 20);
 			g.drawString("HEALTH: " + player.getHealth(), 20, 450);
-		}
-
-		// render the animations
-		for (int i = 0; i < animations.size(); i++) {
-			tempAnimation = animations.get(i);
-			tempAnimation.render(g);
-		}
-
-		if (gameOver) {// if the game is in gameover state
+		} else if (gameState == GameStates.MAINMENU) {
+			mainMenu.render(g);
+		} else if (gameState == GameStates.OPTIONSMENU) {
+			optionsMenu.render(g);
+		} else if (gameState == GameStates.GAMEOVER) {
 			if (!playerDestroyed) {// if the player is not destroyed
-				game.getSpawnSystem().spawnExplosion01(player.getX(), player.getY());// spawn
-																						// an
-																						// explosion01
-																						// on
-																						// the
-																						// player's
-																						// position
+				// spawn an explosion01 on the player's position
+				game.getSpawnSystem().spawnExplosion01(player.getX(), player.getY());
 				playerDestroyed = !playerDestroyed;// swap playerDestroyed
 			}
-
 			Font standartFont = g.getFont();
 			g.setFont(new Font("Arial", Font.BOLD, 30));
-			g.drawString("GAMEOVER!", 220, 250);
+			g.drawString("GAMEOVER!", 220, 200);
 			g.setFont(new Font("Arial", Font.BOLD, 20));
-			g.drawString("Points gained: " + gameScore, 240, 300);
-			g.drawString("Level reached: " + player.getLevel(), 240, 350);
+			g.drawString("Points gained: " + gameScore, 240, 250);
+			g.drawString("Level reached: " + player.getLevel(), 240, 300);
 			g.setFont(standartFont);
 
 		}
@@ -178,7 +201,7 @@ public class Controller {
 	 * set the game to gameover state
 	 */
 	public void gameOver() {
-		gameOver = true;
+		gameState = GameStates.GAMEOVER;
 		enemies.clear();// remove all enemies
 	}
 

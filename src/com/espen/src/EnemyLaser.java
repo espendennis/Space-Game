@@ -15,25 +15,18 @@ public class EnemyLaser extends PlayerLaser {
 	/**
 	 * Constructor
 	 * 
-	 * @param image
+	 * @param sprite
 	 *            Spritesheet for this character
 	 * @param game
 	 *            A reference to a game-object to get access to the other
 	 *            subsystems
-	 * @param cols
-	 *            number of columns the animation takes in the spritesheet
-	 * @param rows
-	 *            number of rows the animation takes in the spritesheet
-	 * @param animationSpeed
-	 *            how many ticks between the animation jumps to the next
-	 *            subimage
 	 * @param x
 	 *            x-coordinate of desired spawn-point
 	 * @param y
 	 *            y-coordinate of desired spawn-point
 	 */
-	public EnemyLaser(BufferedImage image, Game game, int cols, int rows, int animationSpeed, double x, double y) {
-		super(image, game, cols, rows, animationSpeed, x, y);
+	public EnemyLaser(BufferedImage[] sprite, Game game, double x, double y) {
+		super(sprite, game, x, y);
 		speed = -Blackboard.SPEEDENEMYLASERLVL1; // set speed
 		damage = Blackboard.DAMAGEENEMYLASERLVL1; // set damage
 
@@ -45,19 +38,12 @@ public class EnemyLaser extends PlayerLaser {
 	public void checkCollision() {
 
 		if (player == null) { // check if player is null
-			player = game.getEntityManager().getPlayer();// set the player. This
-														// prevents randomly
-														// happening
-														// null-pointer-exceptions
+			// set the player. This prevents randomly happening
+			// null-pointer-exceptions
+			player = game.getEntityManager().getPlayer();
 		}
-		collision = this.getBounds().intersects(player.getBounds()); // check if
-																		// the
-																		// bounds
-																		// intersect
-																		// with
-																		// the
-																		// player's
-																		// bounds
+		// check if the bounds intersect with the player's bounds
+		collision = this.getBounds().intersects(player.getBounds());
 		if (collision == true) { // if they intersect...
 			player.takeDamage(damage); // ...deal damage to the player...
 			game.getSpawnSystem().spawnRedLaserImpact(x, y);// ...and spawn an

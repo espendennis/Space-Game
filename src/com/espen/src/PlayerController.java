@@ -13,8 +13,7 @@ import java.util.Hashtable;
  *
  */
 public class PlayerController {
-
-	private Game game;
+	
 	private Actor target;
 	private Hashtable<String, Integer> keyTable;
 	private String up = "up";
@@ -27,6 +26,7 @@ public class PlayerController {
 	private boolean pressingLeft = false;
 	private boolean pressingRight = false;
 
+
 	/**
 	 * Constructor Only needs a reference to game to get access to other
 	 * subsystems
@@ -34,8 +34,6 @@ public class PlayerController {
 	 * @param game
 	 */
 	public PlayerController(Game game) {
-		this.game = game;
-		target = game.getEntityManager().getPlayer();
 		keyTable = new Hashtable<String, Integer>();
 		keyTable.put(up, new Integer(KeyEvent.VK_UP));
 		keyTable.put(left, new Integer(KeyEvent.VK_LEFT));
@@ -59,6 +57,7 @@ public class PlayerController {
 	 * handles the keyPressed events
 	 * 
 	 * @param e
+	 *            KeyEvent
 	 */
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
@@ -89,6 +88,7 @@ public class PlayerController {
 	 * handles the keyReleased events
 	 * 
 	 * @param e
+	 *            KeyEvent
 	 */
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
